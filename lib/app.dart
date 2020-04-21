@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:med_app/constants/app_constants.dart';
+import 'package:med_app/services/route_generator.dart';
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Home screen"),
-      ),
-      body: Container(),
+    return MaterialApp(
+      title: 'Flutter Demo',
+      initialRoute: RouteConstants.DefaultScreen,
+      onGenerateRoute: RouteGenerator.generateRoute,
+      debugShowCheckedModeBanner: false,
+      theme: _getTheme(context),
     );
   }
+}
+
+ThemeData _getTheme(BuildContext context) {
+  return ThemeData();
 }

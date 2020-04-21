@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:med_app/app.dart';
-import 'package:med_app/constants/app_constants.dart';
+
+import '../constants/app_constants.dart';
+import '../home_page.dart';
 import '../screens/error_screen/error_screen.dart';
+import '../screens/login_screen/login_screen.dart';
 
 MaterialPageRoute _buildPage(dynamic page) {
   return MaterialPageRoute(builder: (_) => page);
@@ -15,6 +17,10 @@ class RouteGenerator {
     switch (settings.name) {
       case RouteConstants.DefaultScreen:
         return _buildPage(MyHomePage());
+
+      case RouteConstants.LoginScreen:
+        return _buildPage(LoginScreen());
+
       default:
         return _buildPage(ErrorScreen());
     }
