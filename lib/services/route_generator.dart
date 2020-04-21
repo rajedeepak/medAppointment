@@ -15,9 +15,6 @@ class RouteGenerator {
     final Map<String, dynamic> args = settings.arguments;
 
     switch (settings.name) {
-      case RouteConstants.DefaultScreen:
-        return _buildPage(MyHomePage());
-
       case RouteConstants.LoginScreen:
         return _buildPage(LoginScreen());
 

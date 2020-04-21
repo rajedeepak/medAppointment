@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:med_app/constants/colors_theme.dart';
 import 'package:med_app/constants/text_theme.dart';
 import 'package:med_app/utilities.dart';
@@ -19,6 +20,8 @@ class _LoginScreenState extends State<LoginScreen>
   Animation<double> _animationMain;
   Animation<double> _animationSignIn;
   Animation<double> _animationSignUp;
+
+  bool keyboardActive = false;
 
   @override
   void initState() {
@@ -59,13 +62,14 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
 
-//    _controllerMain.addListener(() => setState(() {}));
-//    _controllerSignIn.addListener(() => setState(() {}));
-//    _controllerSignUp.addListener(() => setState(() {}));
+    KeyboardVisibilityNotification().addNewListener(onChange: (bool visible) {
+      if (visible)
+        keyboardActive = true;
+      else
+        keyboardActive = false;
+    });
 
     _controllerMain.forward();
-//    _controllerSignIn.forward();
-//    _controllerSignUp.forward();
   }
 
   @override
@@ -84,6 +88,9 @@ class _LoginScreenState extends State<LoginScreen>
       body: Container(
         color: AppColors.primaryDark,
         child: SingleChildScrollView(
+          physics: keyboardActive
+              ? AlwaysScrollableScrollPhysics()
+              : NeverScrollableScrollPhysics(),
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -129,10 +136,13 @@ class _LoginScreenState extends State<LoginScreen>
                         right: 12,
                         child: Transform.translate(
                           offset: Offset(0, _animationSignIn.value),
-                          child: SignInWidget(onCloseCalled: () {
-                            _controllerSignIn.reverse();
-                            _controllerMain.forward();
-                          }),
+                          child: SignInWidget(
+                            onCloseCalled: () {
+                              FocusScope.of(context).unfocus();
+                              _controllerSignIn.reverse();
+                              _controllerMain.forward();
+                            },
+                          ),
                         ),
                       );
                     }),
@@ -145,10 +155,13 @@ class _LoginScreenState extends State<LoginScreen>
                         right: 12,
                         child: Transform.translate(
                           offset: Offset(0, _animationSignUp.value),
-                          child: SignUpWidget(onCloseCalled: () {
-                            _controllerSignUp.reverse();
-                            _controllerMain.forward();
-                          }),
+                          child: SignUpWidget(
+                            onCloseCalled: () {
+                              FocusScope.of(context).unfocus();
+                              _controllerSignUp.reverse();
+                              _controllerMain.forward();
+                            },
+                          ),
                         ),
                       );
                     }),
@@ -329,6 +342,13 @@ class _SignInWidgetState extends State<SignInWidget> {
                       keyboardType: TextInputType.text,
                       obscureText: true,
                       validator: StringValidators.passwordValidator,
+                    ),
+                    SizedBox(height: 12),
+                    MyRoundedButton(
+                      text: "Forgot Password?",
+                      onTap: () {},
+                      textColor: AppColors.whiteTextDull,
+                      color: AppColors.primaryLight,
                     ),
                     SizedBox(height: 12),
                     MyRoundedButton(

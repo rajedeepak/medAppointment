@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static const whiteText = Colors.white;
+  static const whiteTextDull = Color(0xFFCCCCCC);
   static const whiteIcon = Colors.white;
   static const white = Colors.white;
   static const brown = Colors.brown;
