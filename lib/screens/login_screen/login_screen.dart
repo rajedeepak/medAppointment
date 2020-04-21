@@ -10,44 +10,69 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen>
-    with SingleTickerProviderStateMixin {
-  Animation<double> loginMainAnimation;
-  AnimationController loginAnimationController;
+    with TickerProviderStateMixin {
+  AnimationController _controllerMain;
+  AnimationController _controllerSignIn;
+  AnimationController _controllerSignUp;
+
+  Animation<double> _animationMain;
+  Animation<double> _animationSignIn;
+  Animation<double> _animationSignUp;
 
   @override
   void initState() {
     super.initState();
-    initAnimations().then((_) {
-      if (mounted) {
-        loginAnimationController.forward();
-      }
-    });
+    _controllerMain = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    _controllerSignIn = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    _controllerSignUp = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    _animationMain = Tween<double>(begin: 500, end: 0).animate(
+      CurvedAnimation(
+        parent: _controllerMain,
+        curve: Interval(0.4, 1, curve: Curves.easeInOutCubic),
+      ),
+    );
+
+    _animationSignIn = Tween<double>(begin: 500, end: 0).animate(
+      CurvedAnimation(
+        parent: _controllerSignIn,
+        curve: Interval(0.4, 1, curve: Curves.easeInOutCubic),
+      ),
+    );
+
+    _animationSignUp = Tween<double>(begin: 500, end: 0).animate(
+      CurvedAnimation(
+        parent: _controllerSignUp,
+        curve: Interval(0.4, 1, curve: Curves.easeInOutCubic),
+      ),
+    );
+
+//    _controllerMain.addListener(() => setState(() {}));
+//    _controllerSignIn.addListener(() => setState(() {}));
+//    _controllerSignUp.addListener(() => setState(() {}));
+
+    _controllerMain.forward();
+//    _controllerSignIn.forward();
+//    _controllerSignUp.forward();
   }
 
   @override
   void dispose() {
-    loginAnimationController.dispose();
+    _controllerMain.dispose();
+    _controllerSignIn.dispose();
+    _controllerSignUp.dispose();
     super.dispose();
-  }
-
-  initAnimations() async {
-    loginAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-    loginMainAnimation = Tween<double>(
-      begin: 500,
-      end: 0,
-    ).animate(
-      CurvedAnimation(
-        parent: loginAnimationController,
-        curve: Interval(
-          0.4,
-          1,
-          curve: Curves.easeInOutCubic,
-        ),
-      ),
-    );
   }
 
   @override
@@ -59,23 +84,62 @@ class _LoginScreenState extends State<LoginScreen>
           child: Stack(
             children: <Widget>[
               AnimatedBuilder(
-                  animation: this.loginAnimationController,
+                  animation: this._controllerMain,
                   builder: (context, child) {
                     return Positioned(
                       bottom: -30,
                       left: 12,
                       right: 12,
                       child: Transform.translate(
-                        offset: Offset(0, loginMainAnimation.value),
+                        offset: Offset(0, _animationMain.value),
                         child: MainLoginWidget(
                           callSignIn: () {
-                            this.loginAnimationController.reverse();
+                            this._controllerMain.reverse();
+                            this._controllerSignIn.forward();
                           },
-                          callSignUp: () {},
+                          callSignUp: () {
+                            this._controllerMain.reverse();
+                            this._controllerSignUp.forward();
+                          },
                         ),
                       ),
                     );
                   }),
+              AnimatedBuilder(
+                  animation: this._controllerSignIn,
+                  builder: (context, child) {
+                    return
+                      Positioned(
+                        bottom: 30,
+                        left: 12,
+                        right: 12,
+                        child: Transform.translate(
+                          offset: Offset(0, _animationSignIn.value),
+                          child: SignInWidget(onCloseCalled: (){
+                            _controllerSignIn.reverse();
+                            _controllerMain.forward();
+                          }),
+                        ),
+                      );
+                  }),
+              AnimatedBuilder(
+                  animation: this._controllerSignUp,
+                  builder: (context, child) {
+                    return Positioned(
+                      bottom: 30,
+                      left: 12,
+                      right: 12,
+                      child: Transform.translate(
+                        offset: Offset(0, _animationSignUp.value),
+                        child: SignUpWidget(onCloseCalled: (){
+                          _controllerSignUp.reverse();
+                          _controllerMain.forward();
+                        }),
+                      ),
+                    );
+                  }),
+
+
             ],
           ),
         ),
