@@ -404,7 +404,7 @@ class _SignInWidgetState extends State<SignInWidget> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  bool autoValidate = false;
+  bool _autoValidate = false;
 
   @override
   Widget build(BuildContext context) {
@@ -474,6 +474,7 @@ class _SignInWidgetState extends State<SignInWidget> {
                       ),
                       keyboardType: TextInputType.text,
                       validator: StringValidators.emailValidator,
+                      autovalidate: _autoValidate,
                     ),
                     SizedBox(height: 12),
                     TextFormField(
@@ -485,6 +486,7 @@ class _SignInWidgetState extends State<SignInWidget> {
                       keyboardType: TextInputType.text,
                       obscureText: true,
                       validator: StringValidators.passwordValidator,
+                      autovalidate: _autoValidate,
                     ),
                     SizedBox(height: 12),
                     MyRoundedButton(
@@ -499,7 +501,10 @@ class _SignInWidgetState extends State<SignInWidget> {
                       color: AppColors.secondaryAccent,
                       textColor: AppColors.brown,
                       onTap: () {
-                        if (_formKey.currentState.validate()) {}
+                        if (_formKey.currentState.validate()) {
+                        } else {
+                          _autoValidate = true;
+                        }
                       },
                     ),
                   ],
@@ -603,6 +608,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                       keyboardType: TextInputType.text,
                       validator: StringValidators.nameValidator,
                       controller: _firstNameController,
+                      autovalidate: _autoValidate,
                     ),
                     SizedBox(height: 12),
                     TextFormField(
@@ -614,6 +620,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                       keyboardType: TextInputType.text,
                       validator: StringValidators.nameValidator,
                       controller: _lastNameController,
+                      autovalidate: _autoValidate,
                     ),
                     SizedBox(height: 12),
                     TextFormField(
@@ -625,6 +632,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                       keyboardType: TextInputType.text,
                       validator: StringValidators.emailValidator,
                       controller: _emailController,
+                      autovalidate: _autoValidate,
                     ),
                     SizedBox(height: 12),
                     TextFormField(
@@ -646,6 +654,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                       obscureText: !_showPassword1,
                       validator: StringValidators.passwordValidator,
                       controller: _passwordController,
+                      autovalidate: _autoValidate,
                     ),
                     SizedBox(height: 12),
                     TextFormField(
@@ -667,6 +676,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                       obscureText: !_showPassword2,
                       validator: StringValidators.passwordValidator,
                       controller: _confirmPasswordController,
+                      autovalidate: _autoValidate,
                     ),
                     SizedBox(height: 12),
                     MyRoundedButton(
@@ -674,7 +684,10 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                       color: AppColors.secondaryAccent,
                       textColor: AppColors.brown,
                       onTap: () {
-                        if (_formKey.currentState.validate()) {}
+                        if (_formKey.currentState.validate()) {
+                        } else {
+                          _autoValidate = true;
+                        }
                       },
                     ),
                   ],
@@ -704,7 +717,7 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  bool autoValidate = false;
+  bool _autoValidate = false;
 
   @override
   Widget build(BuildContext context) {
@@ -774,6 +787,7 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
                       ),
                       keyboardType: TextInputType.text,
                       validator: StringValidators.emailValidator,
+                      autovalidate: _autoValidate,
                     ),
                     SizedBox(height: 18),
                     MyRoundedButton(
@@ -781,7 +795,10 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
                       color: AppColors.secondaryAccent,
                       textColor: AppColors.brown,
                       onTap: () {
-                        if (_formKey.currentState.validate()) {}
+                        if (_formKey.currentState.validate()) {
+                        } else {
+                          _autoValidate = true;
+                        }
                       },
                     ),
                   ],
