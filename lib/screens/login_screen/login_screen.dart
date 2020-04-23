@@ -16,10 +16,12 @@ class _LoginScreenState extends State<LoginScreen>
   AnimationController _controllerMain;
   AnimationController _controllerSignIn;
   AnimationController _controllerSignUp;
+  AnimationController _controllerForgotPassword;
 
   Animation<double> _animationMain;
   Animation<double> _animationSignIn;
   Animation<double> _animationSignUp;
+  Animation<double> _animationForgotPassword;
 
   bool keyboardActive = false;
 
@@ -41,6 +43,11 @@ class _LoginScreenState extends State<LoginScreen>
       duration: const Duration(milliseconds: 600),
     );
 
+    _controllerForgotPassword = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
     _animationMain = Tween<double>(begin: 700, end: 0).animate(
       CurvedAnimation(
         parent: _controllerMain,
@@ -58,6 +65,13 @@ class _LoginScreenState extends State<LoginScreen>
     _animationSignUp = Tween<double>(begin: 700, end: 0).animate(
       CurvedAnimation(
         parent: _controllerSignUp,
+        curve: Interval(0.4, 1, curve: Curves.easeInOutCubic),
+      ),
+    );
+
+    _animationForgotPassword = Tween<double>(begin: 700, end: 0).animate(
+      CurvedAnimation(
+        parent: _controllerForgotPassword,
         curve: Interval(0.4, 1, curve: Curves.easeInOutCubic),
       ),
     );
@@ -142,6 +156,10 @@ class _LoginScreenState extends State<LoginScreen>
                               _controllerSignIn.reverse();
                               _controllerMain.forward();
                             },
+                            forgotPassword: () {
+                              _controllerSignIn.reverse();
+                              _controllerForgotPassword.forward();
+                            },
                           ),
                         ),
                       );
@@ -160,6 +178,25 @@ class _LoginScreenState extends State<LoginScreen>
                               FocusScope.of(context).unfocus();
                               _controllerSignUp.reverse();
                               _controllerMain.forward();
+                            },
+                          ),
+                        ),
+                      );
+                    }),
+                AnimatedBuilder(
+                    animation: this._controllerForgotPassword,
+                    builder: (context, child) {
+                      return Positioned(
+                        bottom: 30,
+                        left: 12,
+                        right: 12,
+                        child: Transform.translate(
+                          offset: Offset(0, _animationForgotPassword.value),
+                          child: ForgetPasswordWidget(
+                            onCloseCalled: () {
+                              FocusScope.of(context).unfocus();
+                              _controllerForgotPassword.reverse();
+                              _controllerSignIn.forward();
                             },
                           ),
                         ),
@@ -247,10 +284,11 @@ class MainLoginWidget extends StatelessWidget {
 
 class SignInWidget extends StatefulWidget {
   final Function onCloseCalled;
-
+  final Function forgotPassword;
   const SignInWidget({
     Key key,
     @required this.onCloseCalled,
+    @required this.forgotPassword,
   }) : super(key: key);
 
   @override
@@ -346,7 +384,7 @@ class _SignInWidgetState extends State<SignInWidget> {
                     SizedBox(height: 12),
                     MyRoundedButton(
                       text: "Forgot Password?",
-                      onTap: () {},
+                      onTap: widget.forgotPassword,
                       textColor: AppColors.whiteTextDull,
                       color: AppColors.primaryLight,
                     ),
@@ -494,9 +532,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                             });
                           },
                           child: Icon(
-                            _showPassword1
-                                ? Icons.lock_open
-                                : Icons.lock_outline,
+                            _showPassword1 ? Icons.lock_open : Icons.lock,
                           ),
                         ),
                         labelText: "Password",
@@ -517,9 +553,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                             });
                           },
                           child: Icon(
-                            _showPassword2
-                                ? Icons.lock_open
-                                : Icons.lock_outline,
+                            _showPassword2 ? Icons.lock_open : Icons.lock,
                           ),
                         ),
                         labelText: "Confirm Password",
@@ -532,6 +566,113 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                     SizedBox(height: 12),
                     MyRoundedButton(
                       text: "Create Account",
+                      color: AppColors.secondaryAccent,
+                      textColor: AppColors.brown,
+                      onTap: () {
+                        if (_formKey.currentState.validate()) {}
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ForgetPasswordWidget extends StatefulWidget {
+  final Function onCloseCalled;
+
+  const ForgetPasswordWidget({
+    Key key,
+    @required this.onCloseCalled,
+  }) : super(key: key);
+
+  @override
+  _ForgetPasswordWidgetState createState() => _ForgetPasswordWidgetState();
+}
+
+class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  bool autoValidate = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final _borderRadius = BorderRadius.circular(12.0);
+    return Material(
+      color: AppColors.primaryLight,
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: _borderRadius,
+        side: BorderSide(
+          color: AppColors.secondaryLight,
+          width: 6,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 25,
+        ),
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  "Reset Password",
+                  style: Theme.of(context).textTheme.body1.copyWith(
+                        color: AppColors.whiteText,
+                        fontFamily: AppFont.familyFrederickatheGreat,
+                        fontSize: 30,
+                      ),
+                ),
+                Material(
+                  color: AppColors.primaryLight,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(200),
+                    onTap: widget.onCloseCalled,
+                    child: SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: Icon(
+                        Icons.close,
+                        color: AppColors.whiteText,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Theme(
+              data: ThemeData.dark().copyWith(
+                primaryColor: AppColors.secondaryAccent,
+                accentColor: AppColors.secondaryAccent,
+                cursorColor: AppColors.secondaryAccent,
+              ),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.person),
+                        labelText: "Email address",
+                      ),
+                      keyboardType: TextInputType.text,
+                      validator: StringValidators.emailValidator,
+                    ),
+                    SizedBox(height: 18),
+                    MyRoundedButton(
+                      text: "Confirm",
                       color: AppColors.secondaryAccent,
                       textColor: AppColors.brown,
                       onTap: () {
