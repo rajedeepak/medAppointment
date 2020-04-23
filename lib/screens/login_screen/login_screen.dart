@@ -26,8 +26,11 @@ class _LoginScreenState extends State<LoginScreen>
   Animation<double> _animationForgotPassword;
 
   bool keyboardActive = false;
+  bool doubleBackToExitState = false;
 
   List<_Panels> _activePanelList;
+
+  int secondsToExit = 2;
 
   @override
   void initState() {
@@ -145,9 +148,9 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     final _width = MediaQuery.of(context).size.width;
 
-    return WillPopScope(
-        child: Scaffold(
-          body: Container(
+    return Scaffold(
+      body: WillPopScope(
+          child: Container(
             color: AppColors.primaryDark,
             child: SingleChildScrollView(
               physics: keyboardActive
@@ -246,24 +249,70 @@ class _LoginScreenState extends State<LoginScreen>
               ),
             ),
           ),
+          onWillPop: () async {
+            switch (_activePanelList[_activePanelList.length - 1]) {
+              case _Panels.main:
+                if (!doubleBackToExitState) {
+                  // first back click
+                  showOverlay(context);
+                  doubleBackToExitState = true;
+                  Future.delayed(Duration(seconds: secondsToExit)).then((_) {
+                    if (mounted) {
+                      doubleBackToExitState = false;
+                    }
+                  });
+                  return false;
+                }
+                return true;
+              case _Panels.signIn:
+                _removeSignIn();
+                return false;
+              case _Panels.signUp:
+                _removeSignUp();
+                return false;
+              case _Panels.forget:
+                _removeForgetPassword();
+                return false;
+            }
+            return true;
+          }),
+    );
+  }
+
+  void showOverlay(BuildContext context) async {
+    OverlayState overlayState = Overlay.of(context);
+    OverlayEntry overlayEntry = OverlayEntry(
+      builder: (context) => Align(
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 30),
+          child: Material(
+            type: MaterialType.transparency,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xE6FFFFFF),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(
+                  "Press back again to exit",
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
         ),
-        onWillPop: () async {
-          if (_activePanelList.length == 1) return true;
-          switch (_activePanelList[_activePanelList.length - 1]) {
-            case _Panels.main:
-              return true;
-            case _Panels.signIn:
-              _removeSignIn();
-              return false;
-            case _Panels.signUp:
-              _removeSignUp();
-              return false;
-            case _Panels.forget:
-              _removeForgetPassword();
-              return false;
-          }
-          return true;
-        });
+      ),
+    );
+
+    overlayState.insert(overlayEntry);
+
+    await Future.delayed(Duration(seconds: secondsToExit));
+    overlayEntry.remove();
   }
 }
 
