@@ -6,6 +6,8 @@ import 'package:med_app/constants/text_theme.dart';
 import 'package:med_app/utilities.dart';
 import 'package:med_app/widgets/my_buttons.dart';
 
+enum _Panels { main, signIn, signUp, forget }
+
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -25,9 +27,14 @@ class _LoginScreenState extends State<LoginScreen>
 
   bool keyboardActive = false;
 
+  List<_Panels> _activePanelList;
+
   @override
   void initState() {
     super.initState();
+
+    _activePanelList = <_Panels>[_Panels.main];
+
     _controllerMain = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
@@ -91,123 +98,172 @@ class _LoginScreenState extends State<LoginScreen>
     _controllerMain.dispose();
     _controllerSignIn.dispose();
     _controllerSignUp.dispose();
+    _controllerForgotPassword.dispose();
     super.dispose();
+  }
+
+  void _pushSignIn() {
+    this._controllerMain.reverse();
+    this._controllerSignIn.forward();
+    _activePanelList.add(_Panels.signIn);
+  }
+
+  void _removeSignIn() {
+    FocusScope.of(context).unfocus();
+    _activePanelList.removeLast();
+    _controllerSignIn.reverse();
+    _controllerMain.forward();
+  }
+
+  void _pushSignUp() {
+    this._controllerMain.reverse();
+    this._controllerSignUp.forward();
+    _activePanelList.add(_Panels.signUp);
+  }
+
+  void _removeSignUp() {
+    FocusScope.of(context).unfocus();
+    _activePanelList.removeLast();
+    _controllerSignUp.reverse();
+    _controllerMain.forward();
+  }
+
+  void _pushForgetPassword() {
+    _controllerSignIn.reverse();
+    _controllerForgotPassword.forward();
+    _activePanelList.add(_Panels.forget);
+  }
+
+  void _removeForgetPassword() {
+    FocusScope.of(context).unfocus();
+    _activePanelList.removeLast();
+    _controllerForgotPassword.reverse();
+    _controllerSignIn.forward();
   }
 
   @override
   Widget build(BuildContext context) {
     final _width = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      body: Container(
-        color: AppColors.primaryDark,
-        child: SingleChildScrollView(
-          physics: keyboardActive
-              ? AlwaysScrollableScrollPhysics()
-              : NeverScrollableScrollPhysics(),
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: Stack(
-              children: <Widget>[
-                Positioned(
-                  top: _width * 0.15,
-                  right: _width * 0.15,
-                  left: _width * 0.15,
-                  child: Image.asset(
-                    'assets/images/stethoscope-icon-2316460_960_720.png',
-                    fit: BoxFit.fitWidth,
-                  ),
+    return WillPopScope(
+        child: Scaffold(
+          body: Container(
+            color: AppColors.primaryDark,
+            child: SingleChildScrollView(
+              physics: keyboardActive
+                  ? AlwaysScrollableScrollPhysics()
+                  : NeverScrollableScrollPhysics(),
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: Stack(
+                  children: <Widget>[
+                    Positioned(
+                      top: _width * 0.15,
+                      right: _width * 0.15,
+                      left: _width * 0.15,
+                      child: Image.asset(
+                        'assets/images/stethoscope-icon-2316460_960_720.png',
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
+                    AnimatedBuilder(
+                        animation: this._controllerMain,
+                        builder: (context, child) {
+                          return Positioned(
+                            bottom: -30,
+                            left: 12,
+                            right: 12,
+                            child: Transform.translate(
+                              offset: Offset(0, _animationMain.value),
+                              child: MainLoginWidget(
+                                callSignIn: () {
+                                  _pushSignIn();
+                                },
+                                callSignUp: () {
+                                  _pushSignUp();
+                                },
+                              ),
+                            ),
+                          );
+                        }),
+                    AnimatedBuilder(
+                        animation: this._controllerSignIn,
+                        builder: (context, child) {
+                          return Positioned(
+                            bottom: 30,
+                            left: 12,
+                            right: 12,
+                            child: Transform.translate(
+                              offset: Offset(0, _animationSignIn.value),
+                              child: SignInWidget(
+                                onCloseCalled: () {
+                                  _removeSignIn();
+                                },
+                                forgotPassword: () {
+                                  _pushForgetPassword();
+                                },
+                              ),
+                            ),
+                          );
+                        }),
+                    AnimatedBuilder(
+                        animation: this._controllerSignUp,
+                        builder: (context, child) {
+                          return Positioned(
+                            bottom: 30,
+                            left: 12,
+                            right: 12,
+                            child: Transform.translate(
+                              offset: Offset(0, _animationSignUp.value),
+                              child: SignUpWidget(
+                                onCloseCalled: () {
+                                  _removeSignUp();
+                                },
+                              ),
+                            ),
+                          );
+                        }),
+                    AnimatedBuilder(
+                        animation: this._controllerForgotPassword,
+                        builder: (context, child) {
+                          return Positioned(
+                            bottom: 30,
+                            left: 12,
+                            right: 12,
+                            child: Transform.translate(
+                              offset: Offset(0, _animationForgotPassword.value),
+                              child: ForgetPasswordWidget(
+                                onCloseCalled: () {
+                                  _removeForgetPassword();
+                                },
+                              ),
+                            ),
+                          );
+                        }),
+                  ],
                 ),
-                AnimatedBuilder(
-                    animation: this._controllerMain,
-                    builder: (context, child) {
-                      return Positioned(
-                        bottom: -30,
-                        left: 12,
-                        right: 12,
-                        child: Transform.translate(
-                          offset: Offset(0, _animationMain.value),
-                          child: MainLoginWidget(
-                            callSignIn: () {
-                              this._controllerMain.reverse();
-                              this._controllerSignIn.forward();
-                            },
-                            callSignUp: () {
-                              this._controllerMain.reverse();
-                              this._controllerSignUp.forward();
-                            },
-                          ),
-                        ),
-                      );
-                    }),
-                AnimatedBuilder(
-                    animation: this._controllerSignIn,
-                    builder: (context, child) {
-                      return Positioned(
-                        bottom: 30,
-                        left: 12,
-                        right: 12,
-                        child: Transform.translate(
-                          offset: Offset(0, _animationSignIn.value),
-                          child: SignInWidget(
-                            onCloseCalled: () {
-                              FocusScope.of(context).unfocus();
-                              _controllerSignIn.reverse();
-                              _controllerMain.forward();
-                            },
-                            forgotPassword: () {
-                              _controllerSignIn.reverse();
-                              _controllerForgotPassword.forward();
-                            },
-                          ),
-                        ),
-                      );
-                    }),
-                AnimatedBuilder(
-                    animation: this._controllerSignUp,
-                    builder: (context, child) {
-                      return Positioned(
-                        bottom: 30,
-                        left: 12,
-                        right: 12,
-                        child: Transform.translate(
-                          offset: Offset(0, _animationSignUp.value),
-                          child: SignUpWidget(
-                            onCloseCalled: () {
-                              FocusScope.of(context).unfocus();
-                              _controllerSignUp.reverse();
-                              _controllerMain.forward();
-                            },
-                          ),
-                        ),
-                      );
-                    }),
-                AnimatedBuilder(
-                    animation: this._controllerForgotPassword,
-                    builder: (context, child) {
-                      return Positioned(
-                        bottom: 30,
-                        left: 12,
-                        right: 12,
-                        child: Transform.translate(
-                          offset: Offset(0, _animationForgotPassword.value),
-                          child: ForgetPasswordWidget(
-                            onCloseCalled: () {
-                              FocusScope.of(context).unfocus();
-                              _controllerForgotPassword.reverse();
-                              _controllerSignIn.forward();
-                            },
-                          ),
-                        ),
-                      );
-                    }),
-              ],
+              ),
             ),
           ),
         ),
-      ),
-    );
+        onWillPop: () async {
+          if (_activePanelList.length == 1) return true;
+          switch (_activePanelList[_activePanelList.length - 1]) {
+            case _Panels.main:
+              return true;
+            case _Panels.signIn:
+              _removeSignIn();
+              return false;
+            case _Panels.signUp:
+              _removeSignUp();
+              return false;
+            case _Panels.forget:
+              _removeForgetPassword();
+              return false;
+          }
+          return true;
+        });
   }
 }
 
