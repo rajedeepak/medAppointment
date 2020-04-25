@@ -170,80 +170,88 @@ class _LoginScreenState extends State<LoginScreen>
                         fit: BoxFit.fitWidth,
                       ),
                     ),
-                    AnimatedBuilder(
+                    Positioned(
+                      bottom: -30,
+                      left: 12,
+                      right: 12,
+                      child: AnimatedBuilder(
                         animation: this._controllerMain,
                         builder: (context, child) {
-                          return Positioned(
-                            bottom: -30,
-                            left: 12,
-                            right: 12,
-                            child: Transform.translate(
-                              offset: Offset(0, _animationMain.value),
-                              child: MainLoginWidget(
-                                callSignIn: () {
-                                  _pushSignIn();
-                                },
-                                callSignUp: () {
-                                  _pushSignUp();
-                                },
-                              ),
-                            ),
+                          return Transform.translate(
+                            offset: Offset(0, _animationMain.value),
+                            child: child,
                           );
-                        }),
-                    AnimatedBuilder(
+                        },
+                        child: MainLoginWidget(
+                          callSignIn: () {
+                            _pushSignIn();
+                          },
+                          callSignUp: () {
+                            _pushSignUp();
+                          },
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 30,
+                      left: 12,
+                      right: 12,
+                      child: AnimatedBuilder(
                         animation: this._controllerSignIn,
                         builder: (context, child) {
-                          return Positioned(
-                            bottom: 30,
-                            left: 12,
-                            right: 12,
-                            child: Transform.translate(
-                              offset: Offset(0, _animationSignIn.value),
-                              child: SignInWidget(
-                                onCloseCalled: () {
-                                  _removeSignIn();
-                                },
-                                forgotPassword: () {
-                                  _pushForgetPassword();
-                                },
-                              ),
-                            ),
+                          return Transform.translate(
+                            offset: Offset(0, _animationSignIn.value),
+                            child: child,
                           );
-                        }),
-                    AnimatedBuilder(
+                        },
+                        child: SignInWidget(
+                          onCloseCalled: () {
+                            _removeSignIn();
+                          },
+                          forgotPassword: () {
+                            _pushForgetPassword();
+                          },
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 30,
+                      left: 12,
+                      right: 12,
+                      child: AnimatedBuilder(
                         animation: this._controllerSignUp,
                         builder: (context, child) {
-                          return Positioned(
-                            bottom: 30,
-                            left: 12,
-                            right: 12,
-                            child: Transform.translate(
-                              offset: Offset(0, _animationSignUp.value),
-                              child: SignUpWidget(
-                                onCloseCalled: () {
-                                  _removeSignUp();
-                                },
-                              ),
-                            ),
+                          return Transform.translate(
+                            offset: Offset(0, _animationSignUp.value),
+                            child: child,
                           );
-                        }),
-                    AnimatedBuilder(
+                        },
+                        child: SignUpWidget(
+                          onCloseCalled: () {
+                            _removeSignUp();
+                          },
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 30,
+                      left: 12,
+                      right: 12,
+                      child: AnimatedBuilder(
                         animation: this._controllerForgotPassword,
                         builder: (context, child) {
-                          return Positioned(
-                            bottom: 30,
-                            left: 12,
-                            right: 12,
-                            child: Transform.translate(
-                              offset: Offset(0, _animationForgotPassword.value),
-                              child: ForgetPasswordWidget(
-                                onCloseCalled: () {
-                                  _removeForgetPassword();
-                                },
-                              ),
-                            ),
+                          return Transform.translate(
+                            offset: Offset(0, _animationForgotPassword.value),
+                            child: child,
                           );
-                        }),
+                        },
+                        child: ForgetPasswordWidget(
+                          onCloseCalled: () {
+                            _removeForgetPassword();
+                          },
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
